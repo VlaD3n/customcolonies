@@ -11,6 +11,8 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.core.client.model.*;
 import com.minecolonies.core.client.model.raiders.*;
 import com.minecolonies.core.client.render.*;
+import com.minecolonies.core.client.render.gecko.ExternalCitizenAssets;
+import com.minecolonies.core.client.render.gecko.GeckoCitizenRenderer;
 import com.minecolonies.core.client.render.mobs.RenderMercenary;
 import com.minecolonies.core.client.render.mobs.amazon.RendererAmazon;
 import com.minecolonies.core.client.render.mobs.amazon.RendererAmazonSpearman;
@@ -48,6 +50,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
+import software.bernie.geckolib.GeckoLib;
 
 import java.util.Arrays;
 
@@ -272,8 +275,10 @@ public class ClientRegistryHandler
     @SubscribeEvent
     public static void doClientStuff(final EntityRenderersEvent.RegisterRenderers event)
     {
-        event.registerEntityRenderer(ModEntities.CITIZEN, RenderBipedCitizen::new);
-        event.registerEntityRenderer(ModEntities.VISITOR, RenderBipedCitizen::new);
+        GeckoLib.initialize();
+        ExternalCitizenAssets.initialize();
+        event.registerEntityRenderer(ModEntities.CITIZEN, GeckoCitizenRenderer::new);
+        event.registerEntityRenderer(ModEntities.VISITOR, GeckoCitizenRenderer::new);
         event.registerEntityRenderer(ModEntities.FISHHOOK, RenderFishHook::new);
         event.registerEntityRenderer(ModEntities.FIREARROW, FireArrowRenderer::new);
         event.registerEntityRenderer(ModEntities.SPEAR, RendererSpear::new);

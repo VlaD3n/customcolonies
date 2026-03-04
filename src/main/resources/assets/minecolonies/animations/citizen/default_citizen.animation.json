@@ -1,0 +1,29 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.citizen.idle": {
+      "loop": true,
+      "bones": {
+        "root": {
+          "rotation": [0, 0, 0]
+        }
+      }
+    },
+    "animation.citizen.walk": {
+      "loop": true,
+      "bones": {
+        "root": {
+          "position": ["Math.sin(query.anim_time * 10) * 0.3", 0, 0]
+        }
+      }
+    },
+    "animation.citizen.sleep": {
+      "loop": true,
+      "bones": {
+        "root": {
+          "rotation": [0, 0, 90]
+        }
+      }
+    }
+  }
+}

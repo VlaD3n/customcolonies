@@ -51,6 +51,12 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 
@@ -58,7 +64,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
  * The abstract citizen entity.
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.CouplingBetweenObjects"})
-public abstract class AbstractEntityCitizen extends AbstractCivilianEntity implements MenuProvider
+public abstract class AbstractEntityCitizen extends AbstractCivilianEntity implements MenuProvider, software.bernie.geckolib.animatable.GeoEntity
 {
     public static final int ENTITY_AI_TICKRATE = 5;
 
@@ -110,6 +116,8 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      * Was the texture initiated with the citizen view.
      */
     private boolean textureDirty = true;
+
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     private AbstractAdvancedPathNavigate pathNavigate;
 
@@ -760,4 +768,33 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         }
         return super.getDisplayName();
     }
+    @Override
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers)
+    {
+        controllers.add(new AnimationController<>(this, "citizen_controller", 5, state ->
+        {
+            if (isSleeping())
+            {
+                state.setAndContinue(RawAnimation.begin().thenLoop("animation.citizen.sleep"));
+                return PlayState.CONTINUE;
+            }
+
+            if (state.isMoving())
+            {
+                state.setAndContinue(RawAnimation.begin().thenLoop("animation.citizen.walk"));
+            }
+            else
+            {
+                state.setAndContinue(RawAnimation.begin().thenLoop("animation.citizen.idle"));
+            }
+            return PlayState.CONTINUE;
+        }));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache()
+    {
+        return geoCache;
+    }
+
 }
